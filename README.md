@@ -22,3 +22,10 @@ See GIPHY below for app in action:
 See GIPHY below for app in action:
 - Customer succesfully buys a kegerator:
 ![](1-kegerator.gif)
+
+As you can see, I'm able to get the customer to execute the purchase; however, app is having issues when it trys to update stock in MySQL. 
+
+
+Challenge #2: Manager View -
+
+Challenge #3: Supervisor View -
