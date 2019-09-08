@@ -1,5 +1,5 @@
 var mysql = require("mysql");
-// var inquirer = require("inquirer");
+var inquirer = require("inquirer");
 require("console.table");
 
 var connection = mysql.createConnection({
@@ -23,16 +23,60 @@ connection.connect(function(err) {
   });
 
 function start() {
-    console.log("Selecting all items available for sale...\n");
- 
     connection.query("SELECT * FROM products", function (err, result) {
         if (err) throw err;
         console.table(result);
-        promptQuestions(result);
-    })
- }
+        questions(result);
+    });
+ };
 
- //The first should ask them the ID of the product they would like to buy.
- //The second message should ask how many units of the product they would like to buy.
+//The first should ask them the ID of the product they would like to buy.
+function questions(stock){
+    inquirer
+       .prompt([{
+        type: "input",
+        name: "itemID",
+        message: "What is the ID number of the prodiuct you would like to buy?",
+       }]).then(function (answer) {
 
+        var productId = parseInt(answer.itemID);
+        var product = checkForId(productId, stock);
+
+        if (product) {
+            quantity(product);
+        } else {
+            console.log("Opps. You did not select a valid ID");
+            start();
+        }
+    });
+
+};
  
+ //The second message should ask how many units of the product they would like to buy.
+ function quantity(product) {
+    inquirer
+        .prompt({
+            type: "input",
+            name: "quantityUnits",
+            message: "How many units of this item would you like?"
+        })
+        .then(function (answer) {
+            var userQuantity = parseInt(answer.quantityUnits);
+            if (userQuantity > product.stock_quantity) {
+                console.log("Sorry! Not enough items in stock.");
+                start();
+            } else {
+                executePurchase(product, userQuantity);
+            }
+        });
+ };
+ 
+ //Execute purchase after quantity is seleceted
+
+ function executePurchase(product, userQuantity) {
+
+
+
+
+
+ }
