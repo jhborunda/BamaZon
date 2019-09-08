@@ -1,8 +1,8 @@
 # BamaZon
 
-##In this activity I craeted an Amazon-Like storefront with the MySQL skill i have learned until now. 
+## In this activity I craeted an Amazon-Like storefront with the MySQL skill i have learned until now. 
 
-##This app will take in orders from customers and deplete stock from the store's Inventory.
+## This app will take in orders from customers and deplete stock from the store's Inventory.
 
 ________________________________________________________
 
