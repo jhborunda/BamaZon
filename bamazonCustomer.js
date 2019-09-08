@@ -26,57 +26,45 @@ function start() {
     connection.query("SELECT * FROM products", function (err, result) {
         if (err) throw err;
         console.table(result);
-        questions(result);
+        QuestionPrompt(result);
     });
  };
 
 //The first should ask them the ID of the product they would like to buy.
-function questions(stock){
-    inquirer
-       .prompt([{
-        type: "input",
-        name: "itemID",
-        message: "What is the ID number of the prodiuct you would like to buy?",
-       }]).then(function (answer) {
+//The second message should ask how many units of the product they would like to buy.
 
-        var productId = parseInt(answer.itemID);
-        var product = checkForId(productId, stock);
+function QuestionPrompt(){
+	inquirer.prompt([
+	{
+		name: "ID",
+		type: "input",
+		message:"Please enter Item ID of the product you like to buy.",
+	},
+	{
+		name:"Quantity",
+		type:"input",
+		message:"How many units of the product would you like top buy?",
+	},
 
-        if (product) {
-            quantity(product);
-        } else {
-            console.log("Opps. You did not select a valid ID");
-            start();
-        }
-    });
-
+ ]).then(function(answers){
+ 	var quantityNeeded = answers.Quantity;
+ 	var IDrequested = answers.ID;
+ 	buyProducts(IDrequested, quantityNeeded);
+ });
 };
- 
- //The second message should ask how many units of the product they would like to buy.
- function quantity(product) {
-    inquirer
-        .prompt({
-            type: "input",
-            name: "quantityUnits",
-            message: "How many units of this item would you like?"
-        })
-        .then(function (answer) {
-            var userQuantity = parseInt(answer.quantityUnits);
-            if (userQuantity > product.stock_quantity) {
-                console.log("Sorry! Not enough items in stock.");
-                start();
-            } else {
-                executePurchase(product, userQuantity);
-            }
-        });
- };
- 
- //Execute purchase after quantity is seleceted
 
- function executePurchase(product, userQuantity) {
+function buyProducts(ID, totalNeeded){
+	connection.query('Select * FROM products WHERE item_id = ' + ID, function(err,res){
+		if(err){console.log(err)};
+		if(totalNeeded <= res[0].stock_quantity){
+			var totalCost = res[0].price * totalNeeded;
+			console.log("Your total cost for " + totalNeeded + " " +res[0].product_name + " is $" + totalCost + " Thank you!");
 
-
-
-
-
- }
+			connection.query("UPDATE products SET stock_quantity = stock_quantity - " + totalNeeded + "WHERE item_id = " + ID);
+		} else{
+            console.log("Sorry we do not have enough " + res[0].product_name + " to complete your order, please check your quantity.");
+            start();
+		};
+	
+	});
+};
